@@ -23,11 +23,11 @@
 
 
 \begin{frame}
-\frametitle{What are discrete mathematics?}
+\frametitle{What is discrete mathematics?}
   \begin{itemize}
-  \item{}
+  \item{Study of mathematical structures (sets + features) that do not vary ``smoothly'', but have distinct, separated values}
     \medskip
-  \item{}
+  \item{Examples: integers, graphs, statements in logic}
   \end{itemize}
 \end{frame}
 
@@ -35,65 +35,105 @@
 
   \begin{frame}
 \frametitle{What is a graph?}
-  \begin{itemize}
-  \item{}
-    \medskip
-  \item{}
-  \end{itemize}
-\end{frame}
-
-
+\begin{definition} A \textbf{graph} is a pair  G = (V, E) ,
+  where V is a set whose elements are called \textit{vertices} and
+  E is a set whose elements are paired vertices, called \textit{edges}.
+  If the elements of E are ordered pairs, we call the graph \textit{directed}; otherwise, we call it \textit{undirected}.
+\end{definition}
+\bigskip
+\begin{definition}
+  A \textbf{path} in a graph is a sequence of edges which joins a sequence of (distinct) vertices. Paths in directed graphs have an added restriction: the edges must all be directed in the same direction.
+\end{definition}
+  \end{frame}
 
   \begin{frame}
+\frametitle{What is a graph?}
+Insert picture of a directed graph with a path highlighted
+\end{frame}
+
+  
+  \begin{frame}
 \frametitle{Graphs in computer network defense}
-  \begin{itemize}
-  \item{}
+Example: network intrusion detection
+\bigskip
+\begin{itemize}
+  \item{Nodes - computers on a network (aka ``hosts''), labeled by IP addresses}
     \medskip
-  \item{}
+  \item{Edges - communication between hosts}
   \end{itemize}
   \end{frame}
 
-
-  \begin{frame}
+   \begin{frame}
 \frametitle{Graphs in computer network defense}
-  \begin{itemize}
-  \item{}
+Example: Internet topology analysis
+\bigskip
+\begin{itemize}
+  \item{Nodes - routers that advertise eBGP routes}
     \medskip
-  \item{}
-      \end{itemize}
+  \item{Edges - advertised connectivity between ``peered'' routers}
+  \end{itemize}
   \end{frame}
 
 
   \begin{frame}
 \frametitle{What is program analysis?}
   \begin{itemize}
-  \item{}
+  \item{ Automatically analyzing the behavior of computer programs regarding a property such as correctness, robustness, safety and liveness}
     \medskip
-  \item{}
+  \item{Can be \textit{static} (performed without running the program), \textit{dynamic}, or a hybrid of both}
       \end{itemize}
   \end{frame}
 
   \begin{frame}
 \frametitle{Graphs in program analysis}
-  \begin{itemize}
-  \item{}
+Control-flow graph:
+\begin{itemize}
+  \item{Nodes - \textit{basic blocks} of a program}
     \medskip
-  \item{}
+  \item{Edges - \textit{control flow} between basic blocks}
       \end{itemize}
   \end{frame}
 
+  \begin{frame}
+    Insert code of a program in a high level language
+  \end{frame}
+
+  \begin{frame}
+    Insert code of program in assembly
+  \end{frame}
+
+  \begin{frame}
+    Insert assembly program broken into basic blocks
+  \end{frame}
+
+  \begin{frame}
+    Insert assembly program basic blocks redrawn as graph
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Example program analyses}
+    \begin{itemize}
+    \item{\textbf{Control-flow analysis}: what functions get called}
+      \medskip
+    \item{\textbf{Data-flow analysis}: what ranges of values variables take} 
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    Insert assembly program basic blocks redrawn as graph, add colors to nodes for functions
+  \end{frame}
+
+  
 \begin{frame}
 \frametitle{Example: finding an input to reach a desired state}
-  \begin{itemize}
-  \item{}
-    \medskip
-  \item{}
-      \end{itemize}
+  Simple pseudo-code with if-else, while, abort() statement
   \end{frame}
 
 \begin{frame}
 \frametitle{Why is this hard?}
-  \begin{itemize}
+\begin{itemize}
+\item{Undecidability}
+  \medskip
   \item{Leaky abstractions}
     \medskip
   \item{Imprecise models}
@@ -102,31 +142,64 @@
   
   
 \begin{frame}
-\frametitle{Interlude: mathematical logic}
+  \frametitle{Interlude: mathematical logic}
   \begin{itemize}
-  \item{}
+  \item{Formal language: set of symbols (aka ``alphabet'') + rules for putting them together into sentences (aka ``well-formed formulae'' (wff))}
     \medskip
-  \item{}
-      \end{itemize}
-  \end{frame}
+  \item{Theory: a set of sentences in a formal language}
+    \medskip
+  \item{Decision problem: a yes-or-no question over a set of input values}
+    % classified by the computational resources required to solve
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interlude: mathematical logic}
+  \begin{itemize}
+  \item{Propositional calculus: propositional variables + logical connectives \\
+    + inference rules + axioms}
+    \medskip
+  \item{Boolean satisfiability (SAT): is there an assignment of variables to T/F such that the formula evaluates to T?}
+    % NP-complete
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: propositional calculus}
+  Insert truth table, highlight a satisfying assignment
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interlude: mathematical logic}
+  \begin{itemize}
+  \item{First-order logic: variables + logical connectives 
+    + inference rules + axioms \textbf{+ quantifiers ($\forall$, $\exists$) 
+      + (often) equality ($=$) \\ 
+      + predicates + functions} }
+    \medskip
+  \item{Satisfiability modulo theories (SMT): is there an assignment of variables to values such that the formula evaluates to true?}
+    % generalization of SAT
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: (first-order) theory of integers}
+  Insert simple integer programming problem, one that could be solved with Gaussian elimination
+\end{frame}
 
 
  \begin{frame}
-\frametitle{Can we automate any of this?}
-  \begin{itemize}
-  \item{}
+\frametitle{Can we automate program analysis tasks?}
+\begin{itemize}
+  \item{Yes! One way: build analysis systems using SMT solvers.}
     \medskip
-  \item{}
+  \item{Example theories: integers, bit-vectors, arrays}
       \end{itemize}
   \end{frame}
 
   \begin{frame}
 \frametitle{A more realistic example}
-  \begin{itemize}
-  \item{}
-    \medskip
-  \item{}
-      \end{itemize}
+  Show angr to find buffer overflow?
   \end{frame}
 
 \begin{frame}
