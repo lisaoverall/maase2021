@@ -1,3 +1,6 @@
+# C compilation artifacts
+*.o
+
 # LaTex
 *.aux
 *.nav

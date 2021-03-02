@@ -1,12 +1,44 @@
-\documentclass[11pt]{beamer}
+\documentclass[11pt,table]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{ulem}
+
+\usepackage{listings}
+\usepackage{multicol}
+\lstdefinelanguage
+   [x64]{Assembler}     % add a "x64" dialect of Assembler
+   [x86masm]{Assembler} % based on the "x86masm" dialect
+   % with these extra keywords:
+   {morekeywords={CDQE,CQO,CMPSQ,CMPXCHG16B,JRCXZ,LODSQ,MOVSXD, %
+                  POPFQ,PUSHFQ,SCASQ,STOSQ,IRETQ,RDTSCP,SWAPGS, %
+                  rax,rdx,rcx,rbx,rsi,rdi,rsp,rbp, %
+                  r8,r8d,r8w,r8b,r9,r9d,r9w,r9b, %
+                  r10,r10d,r10w,r10b,r11,r11d,r11w,r11b, %
+                  r12,r12d,r12w,r12b,r13,r13d,r13w,r13b, %
+                  r14,r14d,r14w,r14b,r15,r15d,r15w,r15b}} % etc.
+
+\usepackage{xcolor}
+\definecolor{pale-red}{HTML}{FFCCCC}
+\definecolor{pale-yellow}{HTML}{EEEEBB}
+\definecolor{pale-green}{HTML}{CCDDAA}
+
+
+\usepackage{tikz}
+\usetikzlibrary{chains}
+\usetikzlibrary{shapes.geometric}
+\tikzset{box/.style = {draw, rounded corners, on chain, align=center, text centered}}
+\tikzset{start/.style = {draw, rounded corners, on chain, align=center, text centered, fill=pale-green}}
+\tikzset{stop/.style = {draw, rounded corners, on chain, align=center, text centered, fill=pale-red}}
+\tikzset{decision/.style = {draw, rounded corners, on chain, align=center, text centered, fill=pale-yellow}}
+\tikzset{arr/.style = {very thick, -latex}}
+
+
 \usetheme{CambridgeUS}
 \begin{document}
 
@@ -20,6 +52,35 @@
 %\setbeamercovered{transparent}
 %\setbeamertemplate{navigation symbols}{}
 \frame[plain]{\maketitle}
+
+\begin{frame}
+\frametitle{What is program analysis?}
+  \begin{itemize}
+  \item{ Automatically analyzing the behavior of computer programs regarding a property such as correctness, robustness, safety and liveness}
+    \medskip
+  \item{Can be \textit{static} (performed without running the program), \textit{dynamic}, or a hybrid of both}
+      \end{itemize}
+  \end{frame}
+
+\begin{frame}
+  \frametitle{Toy example}
+
+  Let $ foo: int \times int \times List[int] \times int \to Maybe(int) $
+  be a function such that
+  \[
+  foo(x, op, arr, n) = \begin{cases}
+    \sum_{i=0}^{n} arr_i & \mbox{if } x \neq 0 \mbox{ and } op=0 \\
+    \prod_{i=0}^{n} arr_i & \mbox{if } x \neq 0 \mbox{ and } op=1 \\
+    undefined & \mbox{otherwise (i.e., } x=0 \mbox{ or } op \not\in \{0, 1\})
+  \end{cases}
+  \]
+  
+  \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Toy program}
+  \lstinputlisting[language=C, linerange={2-25}, basicstyle=\scriptsize]{example.c}
+  \end{frame}
 
 
 \begin{frame}
@@ -48,45 +109,31 @@
 
   \begin{frame}
 \frametitle{What is a graph?}
-Insert picture of a directed graph with a path highlighted
-\end{frame}
+% Insert picture of a directed graph with a path highlighted
+\begin{columns}
+  \column{.48\linewidth}{
+      \include{graph_abstract.tikz}  
+    }
+  \column{.52\linewidth}{
+\begin{align*}
+  G &= (V, E) \\[10pt]
+  V &= \{0, 1, ..., 12\} \\[10pt] 
+  E &= \{ (0, 1), (0, 2), (2, 3), \\ 
+  & (3, 4),  (3, 8), (8, 9), (8, 10), \\
+  & (10, 11), (11, 12), (12, 11), \\
+  & (4, 5), (5, 6), (6, 5), (6, 7) \}
+\end{align*}
 
-  
-  \begin{frame}
-\frametitle{Graphs in computer network defense}
-Example: network intrusion detection
-\bigskip
-\begin{itemize}
-  \item{Nodes - computers on a network (aka ``hosts''), labeled by IP addresses}
-    \medskip
-  \item{Edges - communication between hosts}
-  \end{itemize}
+Node $9$ is \textbf{\textit{reachable}} from node $0$ by path $((0,2), (2, 3), (3, 8), (8, 9))$.
+    }
+\end{columns}
   \end{frame}
 
-   \begin{frame}
-\frametitle{Graphs in computer network defense}
-Example: Internet topology analysis
-\bigskip
-\begin{itemize}
-  \item{Nodes - routers that advertise eBGP routes}
-    \medskip
-  \item{Edges - advertised connectivity between ``peered'' routers}
-  \end{itemize}
-  \end{frame}
-
-
-  \begin{frame}
-\frametitle{What is program analysis?}
-  \begin{itemize}
-  \item{ Automatically analyzing the behavior of computer programs regarding a property such as correctness, robustness, safety and liveness}
-    \medskip
-  \item{Can be \textit{static} (performed without running the program), \textit{dynamic}, or a hybrid of both}
-      \end{itemize}
-  \end{frame}
 
   \begin{frame}
 \frametitle{Graphs in program analysis}
 Control-flow graph:
+\bigskip
 \begin{itemize}
   \item{Nodes - \textit{basic blocks} of a program}
     \medskip
@@ -94,51 +141,56 @@ Control-flow graph:
       \end{itemize}
   \end{frame}
 
-  \begin{frame}
-    Insert code of a program in a high level language
+  
+  \begin{frame}[fragile]
+    \frametitle{How we actually build control flow graphs}
+    \vspace{-.75cm}\lstinputlisting[language={[x64]Assembler}, linerange={6-74}, basicstyle=\tiny\linespread{0.1}, multicols=2]{example.s}
   \end{frame}
 
-  \begin{frame}
-    Insert code of program in assembly
-  \end{frame}
 
   \begin{frame}
-    Insert assembly program broken into basic blocks
+    \frametitle{High-level control-flow graph}
+    \vspace{-.65cm}\centering\include{graph_high_level.tikz}
   \end{frame}
-
-  \begin{frame}
-    Insert assembly program basic blocks redrawn as graph
-  \end{frame}
-
-  \begin{frame}
-    \frametitle{Example program analyses}
-    \begin{itemize}
-    \item{\textbf{Control-flow analysis}: what functions get called}
-      \medskip
-    \item{\textbf{Data-flow analysis}: what ranges of values variables take} 
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}
-    Insert assembly program basic blocks redrawn as graph, add colors to nodes for functions
-  \end{frame}
-
+  
+  %% \begin{frame}
+  %%   \frametitle{Example program analyses}
+  %%   \begin{itemize}
+  %%   \item{\textbf{Control-flow analysis}: what functions get called}
+  %%     \medskip
+  %%   \item{\textbf{Data-flow analysis}: what ranges of values variables take} 
+  %%   \end{itemize}
+  %% \end{frame}
+  
   
 \begin{frame}
 \frametitle{Example: finding an input to reach a desired state}
-  Simple pseudo-code with if-else, while, abort() statement
-  \end{frame}
+  \vspace{-.65cm}\centering\include{graph_path1.tikz}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: finding an input to reach a desired state}
+  \vspace{-.65cm}\centering\include{graph_path2.tikz}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: finding an input to reach a desired state}
+  \vspace{-.65cm}\centering\include{graph_path3.tikz}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Why is this hard?}
 \begin{itemize}
+\item{Complexity}
+  \medskip
 \item{Undecidability}
   \medskip
-  \item{Leaky abstractions}
-    \medskip
-  \item{Imprecise models}
-    \end{itemize}
-  \end{frame}
+\item{Leaky abstractions}
+  \medskip
+\item{Imprecise models}
+\end{itemize}
+\end{frame}
   
   
 \begin{frame}
@@ -166,7 +218,19 @@ Control-flow graph:
 
 \begin{frame}
   \frametitle{Example: propositional calculus}
-  Insert truth table, highlight a satisfying assignment
+  \begin{displaymath}
+    \begin{array}{c c | c}
+      P & Q & P \oplus Q\\
+      \hline
+      \rowcolor{pale-green} T & T & T\\
+      T & F & F\\
+      F & T & F\\
+      F & F & F\\
+      \end{array}
+  \end{displaymath}
+  \bigskip
+  \center $(P, Q) = (T, T)$ \textbf{\textit{satisfies}} for $P \oplus Q$.
+  
 \end{frame}
 
 \begin{frame}
@@ -184,22 +248,65 @@ Control-flow graph:
 
 \begin{frame}
   \frametitle{Example: (first-order) theory of integers}
-  Insert simple integer programming problem, one that could be solved with Gaussian elimination
+  \begin{displaymath}
+    \begin{cases}
+      5x + 4y - z = 0 \\
+      10y - 3z = 11 \\
+      z = 3
+    \end{cases}
+  \end{displaymath}
+  
+  \center\[ \exists (x, y, z \in \mathbb{Z})(
+  (5x + 4y -z = 0) \wedge
+  (10y - 3z = 11) \wedge
+  (z = 3))
+  \]
+  
+\center $(x, y, z) = (-1, 2, 3)$ is a \textbf{\textit{satisfying assignment}} for the above system.
 \end{frame}
 
+\begin{frame}
+  \frametitle{Example: now with path constraints!}
+  \begin{columns}
+  \column{.7\linewidth}{
+      \vspace{-.65cm}\centering\include{graph_path_constraints.tikz}
+    }
+  \column{.3\linewidth}{
+    \small{
+      Is the ``\texttt{exit(2);}'' node reachable?
+      
+\bigskip
+$\exists ((x, op, n \in int)$\\
+$(arr \in List[int]))($\\
+$(x != 0) \mbox{ \&\&} $ \\
+$(op != 0) \mbox{ \&\&} $ \\
+$(op != 1))$
+
+\medskip
+Satisfying assignments: $(x \in int \setminus \{0\}) \mbox{ \&\&} $ \\
+($op \in int \setminus \{0, 1\})$; \\
+$arr$, $n$ unconstrained
+  }}
+\end{columns}
+  
+\end{frame}
 
  \begin{frame}
 \frametitle{Can we automate program analysis tasks?}
 \begin{itemize}
-  \item{Yes! One way: build analysis systems using SMT solvers.}
+\item{Yes! (But we might have to make some simplifications to make problems tractable, compromising soundness and/or completeness.)}
+  % soundness prevents false negatives, i.e., all possible unsafe inputs are guaranteed to be found
+  % completeness prevents false positives, i.e., input values deemed unsafe are actually unsafe
+  \medskip
+  \item{One way: build analysis systems using SMT solvers.}
     \medskip
   \item{Example theories: integers, bit-vectors, arrays}
       \end{itemize}
   \end{frame}
 
   \begin{frame}
-\frametitle{A more realistic example}
-  Show angr to find buffer overflow?
+\frametitle{Example: using angr to find our path}
+  
   \end{frame}
 
 \begin{frame}
@@ -212,6 +319,30 @@ Control-flow graph:
 \item{Incorporating information from other analyses}
   \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Graphs in computer network defense}
+Example: network intrusion detection
+\bigskip
+\begin{itemize}
+  \item{Nodes - computers on a network (aka ``hosts''), labeled by IP addresses}
+    \medskip
+  \item{Edges - communication between hosts}
+  \end{itemize}
+  \end{frame}
+
+   \begin{frame}
+\frametitle{Graphs in computer network defense}
+Example: Internet topology analysis
+\bigskip
+\begin{itemize}
+  \item{Nodes - routers that advertise eBGP routes}
+    \medskip
+  \item{Edges - advertised connectivity between ``peered'' routers}
+  \end{itemize}
+  \end{frame}
+
+
 
 
 \end{document}
