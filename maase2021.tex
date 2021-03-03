@@ -9,6 +9,9 @@
 \usepackage{subfigure}
 \usepackage{ulem}
 
+\setbeamertemplate{navigation symbols}{}
+\usepackage{appendixnumberbeamer}
+
 \usepackage{listings}
 \usepackage{multicol}
 \lstdefinelanguage
@@ -53,12 +56,17 @@
 %\setbeamertemplate{navigation symbols}{}
 \frame[plain]{\maketitle}
 
+% start by defining cyber security (note that this is opinion, colored by the flavor of research one dones)
+% "no device under your control is executing code not under your control, or performing computations that yield information other than the intended result"
+
 \begin{frame}
 \frametitle{What is program analysis?}
   \begin{itemize}
   \item{ Automatically analyzing the behavior of computer programs regarding a property such as correctness, robustness, safety and liveness}
+    % give informal description of safety (temporal and memory)
     \medskip
   \item{Can be \textit{static} (performed without running the program), \textit{dynamic}, or a hybrid of both}
+    % note that we are talking about dynamic
       \end{itemize}
   \end{frame}
 
@@ -87,6 +95,7 @@
 \frametitle{What is discrete mathematics?}
   \begin{itemize}
   \item{Study of mathematical structures (sets + features) that do not vary ``smoothly'', but have distinct, separated values}
+    % what I mean by smoothly: there exists a bijection between elements of the set I'm working with and (some finite subset of) the naturals; no bijection to the reals
     \medskip
   \item{Examples: integers, graphs, statements in logic}
   \end{itemize}
@@ -118,9 +127,9 @@
 \begin{align*}
   G &= (V, E) \\[10pt]
   V &= \{0, 1, ..., 12\} \\[10pt] 
-  E &= \{ (0, 1), (0, 2), (2, 3), \\ 
-  & (3, 4),  (3, 8), (8, 9), (8, 10), \\
-  & (10, 11), (11, 12), (12, 11), \\
+  E &= \{ (0, 1), (0, 2), (2, 3), (3, 4),\\ 
+  & (3, 8), (8, 9), (8, 10), (10, 11),\\
+  & (11, 12), (12, 11), (11, 7),\\
   & (4, 5), (5, 6), (6, 5), (6, 7) \}
 \end{align*}
 
@@ -145,12 +154,13 @@ Control-flow graph:
   \begin{frame}[fragile]
     \frametitle{How we actually build control flow graphs}
     \vspace{-.75cm}\lstinputlisting[language={[x64]Assembler}, linerange={6-74}, basicstyle=\tiny\linespread{0.1}, multicols=2]{example.s}
+    % highlight that this is asm for foo, compiled for x86_64, in intel syntax, with no optimization
   \end{frame}
 
 
   \begin{frame}
     \frametitle{High-level control-flow graph}
-    \vspace{-.65cm}\centering\include{graph_high_level.tikz}
+    \vspace{-.75cm}\centering\include{graph_high_level.tikz}
   \end{frame}
   
   %% \begin{frame}
@@ -163,19 +173,21 @@ Control-flow graph:
   %% \end{frame}
   
   
-\begin{frame}
-\frametitle{Example: finding an input to reach a desired state}
-  \vspace{-.65cm}\centering\include{graph_path1.tikz}
-\end{frame}
+%% \begin{frame}
+%% \frametitle{Example: finding an input to reach a desired state}
+%% \vspace{-.75cm}\centering\include{graph_path1.tikz}
+%% \end{frame}
+
+%% \begin{frame}
+%% \frametitle{Example: finding an input to reach a desired state}
+%%   \vspace{-.75cm}\centering\include{graph_path2.tikz}
+%% \end{frame}
 
 \begin{frame}
 \frametitle{Example: finding an input to reach a desired state}
-  \vspace{-.65cm}\centering\include{graph_path2.tikz}
-\end{frame}
-
-\begin{frame}
-\frametitle{Example: finding an input to reach a desired state}
-  \vspace{-.65cm}\centering\include{graph_path3.tikz}
+  \vspace{-.75cm}\centering\include{graph_path3.tikz}
+% mention that targets are not always terminal nodes in practice.
+% they might not even be specific nodes, but rather any node that meets a set of conditions based on the modeled execution of the program (i.e., we have to check this after every relevant step
 \end{frame}
 
 
@@ -183,12 +195,17 @@ Control-flow graph:
 \frametitle{Why is this hard?}
 \begin{itemize}
 \item{Complexity}
+  % path explosion; what do I do about loops?
   \medskip
 \item{Undecidability}
+% mention halting problem: determine for a given program and a given input, will this program terminate? Turing proved that a general algorithm for all possible program-input pairs does not exist, i.e. we cannot decide yes or no.
   \medskip
 \item{Leaky abstractions}
+% example: buffer overflow - unless we explicitly insert check on length in C, without special intervention (e.g., compiler pass), it won't be done in the asm. This is different to other application programming languages, and has led to many security problems
   \medskip
 \item{Imprecise models}
+  % might not have source code, so we have to "reverse engineer" / decompile, which is hard
+  % there's actually a lower level under assembly, called the microarchitecture of the processor, which is often proprietary. Does not affect the analysis I'm showing today, but very important for low-level security properties, e.g. cryptographic constant time.
 \end{itemize}
 \end{frame}
   
@@ -196,22 +213,23 @@ Control-flow graph:
 \begin{frame}
   \frametitle{Interlude: mathematical logic}
   \begin{itemize}
-  \item{Formal language: set of symbols (aka ``alphabet'') + rules for putting them together into sentences (aka ``well-formed formulae'' (wff))}
+  \item{\textbf{Formal language}: set of symbols (aka \textit{alphabet}) + rules for putting them together into sentences (aka \textit{well-formed formulae (wff))}}
     \medskip
-  \item{Theory: a set of sentences in a formal language}
+  \item{\textbf{Theory}: a set of sentences in a formal language}
     \medskip
-  \item{Decision problem: a yes-or-no question over a set of input values}
-    % classified by the computational resources required to solve
+  \item{\textbf{Decision problem}: a yes-or-no question over a set of input values}
+    % we talked about one just now - the halting problem
+    % in general, classified by the computational resources required to solve
 \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Interlude: mathematical logic}
   \begin{itemize}
-  \item{Propositional calculus: propositional variables + logical connectives \\
+  \item{\textbf{Propositional calculus}: propositional variables + logical connectives \\
     + inference rules + axioms}
     \medskip
-  \item{Boolean satisfiability (SAT): is there an assignment of variables to T/F such that the formula evaluates to T?}
+  \item{\textbf{Boolean satisfiability (SAT)}: is there an assignment of variables to T/F such that the formula evaluates to T?}
     % NP-complete
   \end{itemize}
 \end{frame}
@@ -229,19 +247,19 @@ Control-flow graph:
       \end{array}
   \end{displaymath}
   \bigskip
-  \center $(P, Q) = (T, T)$ \textbf{\textit{satisfies}} for $P \oplus Q$.
-  
+  \center $(P, Q) = (T, T)$ \textbf{\textit{satisfies}} $P \oplus Q$.
+  % remark - sometimes called zero'th-order logic
 \end{frame}
 
 \begin{frame}
   \frametitle{Interlude: mathematical logic}
   \begin{itemize}
-  \item{First-order logic: variables + logical connectives 
+  \item{\textbf{First-order logic}: variables + logical connectives 
     + inference rules + axioms \textbf{+ quantifiers ($\forall$, $\exists$) 
       + (often) equality ($=$) \\ 
       + predicates + functions} }
     \medskip
-  \item{Satisfiability modulo theories (SMT): is there an assignment of variables to values such that the formula evaluates to true?}
+  \item{\textbf{Satisfiability modulo theories (SMT)}: is there an assignment of variables to values such that the formula evaluates to true?}
     % generalization of SAT
   \end{itemize}
 \end{frame}
@@ -269,13 +287,15 @@ Control-flow graph:
   \frametitle{Example: now with path constraints!}
   \begin{columns}
   \column{.7\linewidth}{
-      \vspace{-.65cm}\centering\include{graph_path_constraints.tikz}
+      \vspace{-.8cm}\centering\include{graph_path_constraints.tikz}
     }
   \column{.3\linewidth}{
     \small{
       Is the ``\texttt{exit(2);}'' node reachable?
       
-\bigskip
+      \bigskip
+      \bigskip
+      \bigskip
 $\exists ((x, op, n \in int)$\\
 $(arr \in List[int]))($\\
 $(x != 0) \mbox{ \&\&} $ \\
@@ -304,10 +324,10 @@ $arr$, $n$ unconstrained
       \end{itemize}
   \end{frame}
 
-  \begin{frame}
-\frametitle{Example: using angr to find our path}
+%%   \begin{frame}
+%% \frametitle{Example: using angr to find our path}
   
-  \end{frame}
+%%   \end{frame}
 
 \begin{frame}
 \frametitle{Where can mathematicians help?}
@@ -319,6 +339,12 @@ $arr$, $n$ unconstrained
 \item{Incorporating information from other analyses}
   \end{itemize}
 \end{frame}
+
+% what's the goal at the end of the day?
+% find vulnerabilities (preferably exploitable ones that lead to arbitrary code execution)
+% fix your code, and develop generalized mitigations if possible
+
+\appendix
 
 \begin{frame}
 \frametitle{Graphs in computer network defense}
