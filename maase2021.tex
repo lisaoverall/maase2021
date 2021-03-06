@@ -56,14 +56,17 @@
 %\setbeamertemplate{navigation symbols}{}
 \frame[plain]{\maketitle}
 
-% start by defining cyber security (note that this is opinion, colored by the flavor of research one dones)
+% start by defining cyber security (note that this is opinion, colored by the flavor of research one does)
 % "no device under your control is executing code not under your control, or performing computations that yield information other than the intended result"
+
+% Key takeaway from this talk: programs can be broken down into mathematical objects, and once you've done that, you can use mathematical techniques to analyze their security properties
 
 \begin{frame}
 \frametitle{What is program analysis?}
   \begin{itemize}
   \item{ Automatically analyzing the behavior of computer programs regarding a property such as correctness, robustness, safety and liveness}
     % give informal description of safety (temporal and memory)
+    % user-supplied data does not cause data to be read or written in unintended ways
     \medskip
   \item{Can be \textit{static} (performed without running the program), \textit{dynamic}, or a hybrid of both}
     % note that we are talking about dynamic
@@ -196,6 +199,7 @@ Control-flow graph:
 \begin{itemize}
 \item{Complexity}
   % path explosion; what do I do about loops?
+  % concurrency: sometimes what you see in the source doesn't represent the actual sequence of actions on the computer
   \medskip
 \item{Undecidability}
 % mention halting problem: determine for a given program and a given input, will this program terminate? Turing proved that a general algorithm for all possible program-input pairs does not exist, i.e. we cannot decide yes or no.
