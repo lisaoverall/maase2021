@@ -8,6 +8,7 @@
 *.snm
 *.toc
 *.log
+*.vrb
 
 # vim artifacts
 # Swap
